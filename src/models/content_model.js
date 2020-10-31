@@ -1,10 +1,9 @@
-'use strict';
+"use strict";
 
-const constants = require('./../utils/constants');
+const constants = require("./../utils/constants");
 const CONTENT_DB_TABLE_NAME = constants.CONTENT_DB_TABLE_NAME;
 
-const parser = require('./../utils/object_sql_query_parser');
-var dbConn = require('./../db_configs/content_db_config');
+var dbConn = require("./../db_configs/content_db_config");
 
 // Content object definition
 var Content = function(content) {
@@ -20,8 +19,8 @@ var Content = function(content) {
 }
 
 Content.create = function (newContent, result) {
-  const query = `INSERT INTO ${CONTENT_DB_TABLE_NAME} set ${newContent}`;
-  dbConn.query(query, function(err, res) {
+  const query = `INSERT INTO ${CONTENT_DB_TABLE_NAME} SET ? `;
+  dbConn.query(query, newContent, function(err, res) {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -31,6 +30,31 @@ Content.create = function (newContent, result) {
     }
   });
 };
+
+Content.findAll = function(result) {
+  const query = `SELECT * FROM ${CONTENT_DB_TABLE_NAME}`;
+  dbConn.query(query, function(err, res) {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  });
+};
+
+Content.findByRange = function(start, end, result) {
+  const query = `SELECT * FROM ${CONTENT_DB_TABLE_NAME} \
+                 ORDER BY id DESC LIMIT ${start},${end - start}`;
+  dbConn.query(query, function(err, res) {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+    } else {
+      result(null, res);
+    }
+  })
+}
 
 Content.findById = function (id, result) {
   const query = `SELECT * FROM ${CONTENT_DB_TABLE_NAME} WHERE id=${id}`;
@@ -44,22 +68,9 @@ Content.findById = function (id, result) {
   });
 };
 
-Content.findAll = function(result) {
-  const query = `SELECT * FROM ${CONTENT_DB_TABLE_NAME}`;
-  dbConn.query(query, function(err, res) {
-    if (err) {
-      console.log("error: ", err);
-      result(err, null);
-    } else {
-      console.log('Contents: ', res);
-      result(null, res);
-    }
-  });
-};
-
 Content.update = function(id, content, result) {
-  const query = `UPDATE ${CONTENT_DB_TABLE_NAME} SET ${parser.parse(content)}`;
-  dbConn.query(query, function(err, res) {
+  const query = `UPDATE ${CONTENT_DB_TABLE_NAME} SET ? `;
+  dbConn.query(query, content, function(err, res) {
     if (err) {
       console.log("error: ", err);
       result(err, null);

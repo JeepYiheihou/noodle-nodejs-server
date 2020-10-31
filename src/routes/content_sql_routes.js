@@ -1,22 +1,25 @@
-'use strict';
+"use strict";
 
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const contentController = require('../controllers/content_sql_controller');
+const contentController = require("../controllers/content_sql_controller");
 
 // Retrieve all contents.
-router.get('/', contentController.findAll);
+router.get("/find-all", contentController.findAll);
+
+// Get contents by range, for paged queries.
+router.get("/find-by-range", contentController.findByRange);
 
 // Create a new content.
-router.post('/', contentController.create);
+router.post("/", contentController.create);
 
 // Retrieve a single content with id.
-router.get('/:id', contentController.findById);
+router.get("/id/:id", contentController.findById);
 
 // Update a content with id.
-router.put('/:id', contentController.update);
+router.put("/id/:id", contentController.update);
 
 // Delete a content with id.
-router.delete('/:id', contentController.delete);
+router.delete("/id/:id", contentController.delete);
 
 module.exports = router;

@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const videoController = require('../controllers/video_controller');
+const videoController = require("../controllers/video_controller");
 
 // Retrieve and play video
-router.get('/:videoPath', videoController.get);
+router.get("/:videoPath", videoController.get);
 
 // TODO: upload a video
 
