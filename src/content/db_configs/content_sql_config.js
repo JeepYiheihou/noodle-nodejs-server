@@ -1,6 +1,6 @@
 "use strict";
 
-const constants = require("./../utils/constants");
+const constants = require("./../../utils/constants");
 const CONTENT_DB_HOST_IP = constants.CONTENT_DB_HOST_IP;
 const CONTENT_DB_PORT = constants.CONTENT_DB_PORT;
 const CONTENT_DB_USER_NAME = constants.CONTENT_DB_USER_NAME;

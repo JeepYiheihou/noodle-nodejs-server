@@ -1,5 +1,7 @@
 "use strict";
 
+// A tricky script to populate large amount of data to databases.
+
 const constants = require("./constants");
 const CONTENT_DB_HOST_IP = constants.CONTENT_DB_HOST_IP;
 const CONTENT_DB_PORT = constants.CONTENT_DB_PORT;

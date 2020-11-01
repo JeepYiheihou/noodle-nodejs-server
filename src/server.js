@@ -15,9 +15,9 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const contentSqlRoutes = require("./routes/content_sql_routes");
-const userSqlRoutes = require("./routes/user_sql_routes");
-const videoRoutes = require("./routes/video_routes");
+const contentSqlRoutes = require("./content/routes/content_sql_routes");
+const userSqlRoutes = require("./user/routes/user_sql_routes");
+const videoRoutes = require("./video/routes/video_routes");
 
 app.get("/", function(req, res) {
   res.sendFile(path.join(__dirname + "/index.html"));

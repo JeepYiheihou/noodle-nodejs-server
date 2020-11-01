@@ -1,9 +1,9 @@
 "use strict";
 
-const constants = require("./../utils/constants");
+const constants = require("./../../utils/constants");
 const CONTENT_DB_TABLE_NAME = constants.CONTENT_DB_TABLE_NAME;
 
-var dbConn = require("./../db_configs/content_db_config");
+var dbConn = require("./../db_configs/content_sql_config");
 
 // Content object definition
 var Content = function(content) {
@@ -18,7 +18,7 @@ var Content = function(content) {
   this.length = content.length;
 }
 
-Content.create = function (newContent, result) {
+Content.create = function(newContent, result) {
   const query = `INSERT INTO ${CONTENT_DB_TABLE_NAME} SET ? `;
   dbConn.query(query, newContent, function(err, res) {
     if (err) {

@@ -1,9 +1,9 @@
 "use strict";
 
-const constants = require("./../utils/constants");
+const constants = require("./../../utils/constants");
 const USER_DB_TABLE_NAME = constants.USER_DB_TABLE_NAME;
 
-var dbConn = require("./../db_configs/user_db_config");
+var dbConn = require("./../db_configs/user_sql_config");
 
 // User object definition
 var User = function(user) {
