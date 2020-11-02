@@ -20,6 +20,6 @@ router.put("/id/:id", userController.update);
 router.delete("/id/:id", userController.delete);
 
 // Verify if a name and password matches to log in as a user.
-router.get("/verify", userController.verify);
+router.post("/login", userController.login);
 
 module.exports = router;

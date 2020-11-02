@@ -3,12 +3,12 @@
 // A tricky script to populate large amount of data to databases.
 
 const constants = require("./constants");
-const CONTENT_DB_HOST_IP = constants.CONTENT_DB_HOST_IP;
-const CONTENT_DB_PORT = constants.CONTENT_DB_PORT;
-const CONTENT_DB_USER_NAME = constants.CONTENT_DB_USER_NAME;
-const CONTENT_DB_PASSWORD = constants.CONTENT_DB_PASSWORD;
-const CONTENT_DB_DATABASE_NAME = constants.CONTENT_DB_DATABASE_NAME;
-const CONTENT_DB_TABLE_NAME = constants.CONTENT_DB_TABLE_NAME;
+const CONTENT_MYSQL_DB_HOST_IP = constants.CONTENT_MYSQL_DB_HOST_IP;
+const CONTENT_MYSQL_DB_PORT = constants.CONTENT_MYSQL_DB_PORT;
+const CONTENT_MYSQL_DB_USER_NAME = constants.CONTENT_MYSQL_DB_USER_NAME;
+const CONTENT_MYSQL_DB_PASSWORD = constants.CONTENT_MYSQL_DB_PASSWORD;
+const CONTENT_MYSQL_DB_DATABASE_NAME = constants.CONTENT_MYSQL_DB_DATABASE_NAME;
+const CONTENT_MYSQL_DB_TABLE_NAME = constants.CONTENT_MYSQL_DB_TABLE_NAME;
 
 const Content = require("../models/content_model");
 
@@ -16,11 +16,11 @@ const Content = require("../models/content_model");
 const mysql = require("mysql2");
 
 const dbConn = mysql.createConnection({
-  host: CONTENT_DB_HOST_IP,
-  port: CONTENT_DB_PORT,
-  user: CONTENT_DB_USER_NAME,
-  password: CONTENT_DB_PASSWORD,
-  database: CONTENT_DB_DATABASE_NAME
+  host: CONTENT_MYSQL_DB_HOST_IP,
+  port: CONTENT_MYSQL_DB_PORT,
+  user: CONTENT_MYSQL_DB_USER_NAME,
+  password: CONTENT_MYSQL_DB_PASSWORD,
+  database: CONTENT_MYSQL_DB_DATABASE_NAME
 });
 
 
@@ -38,7 +38,7 @@ const newContent = new Content({
 dbConn.connect(function(err) {
   if (err) throw err;
   for (var i = 0; i < 1000; i++) {
-    const query = `INSERT INTO ${CONTENT_DB_TABLE_NAME} SET ? `;
+    const query = `INSERT INTO ${CONTENT_MYSQL_DB_TABLE_NAME} SET ? `;
     dbConn.query(query, newContent, function(err, res) {
       if (err) {
         console.log(query);

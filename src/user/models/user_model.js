@@ -1,9 +1,17 @@
 "use strict";
 
 const constants = require("./../../utils/constants");
-const USER_DB_TABLE_NAME = constants.USER_DB_TABLE_NAME;
+const USER_MYSQL_DB_TABLE_NAME = constants.USER_MYSQL_DB_TABLE_NAME;
+const USER_REDIS_TOKEN_TTL = constants.USER_REDIS_TOKEN_TTL;
 
-var dbConn = require("./../db_configs/user_sql_config");
+const dbConn = require("./../db_configs/user_sql_config");
+const redisClient = require("./../db_configs/user_redis_config");
+
+const genericQueryHandler = require("./../../utils/models/generic_query_handler");
+const queryHandler = genericQueryHandler.queryHandler;
+const sendErr = genericQueryHandler.sendErr;
+const sendRes = genericQueryHandler.sendRes;
+const sendResInsertId = genericQueryHandler.sendResInsertId;
 
 // User object definition
 var User = function(user) {
@@ -19,76 +27,41 @@ var User = function(user) {
 }
 
 User.create = function(newUser, result) {
-  const query = `INSERT INTO ${USER_DB_TABLE_NAME} SET ? `;
-  dbConn.query(query, newUser, function(err, res) {
-    if (err) {
-      console.log("error: ", err);
-      result(err, null);
-    } else {
-      console.log(res.insertId);
-      result(null, res.insertId);
-    }
-  });
+  const query = `INSERT INTO ${USER_MYSQL_DB_TABLE_NAME} SET ? `;
+  dbConn.query(query, newUser, queryHandler(result, sendErr, sendResInsertId));
 };
 
 User.findAll = function(result) {
-  const query = `SELECT * FROM ${USER_DB_TABLE_NAME}`;
-  dbConn.query(query, function(err, res) {
-    if (err) {
-      console.log("error: ", err);
-      result(err, null);
-    } else {
-      result(null, res);
-    }
-  });
+  const query = `SELECT * FROM ${USER_MYSQL_DB_TABLE_NAME}`;
+  dbConn.query(query, queryHandler(result, sendErr, sendRes));
 };
 
 User.findById = function (id, result) {
-  const query = `SELECT * FROM ${USER_DB_TABLE_NAME} WHERE id=${id}`;
-  dbConn.query(query, function(err, res) {
-    if (err) {
-      console.log("error: ", err);
-      result(err, null);
-    } else {
-      result(null, res);
-    }
-  });
+  const query = `SELECT * FROM ${USER_MYSQL_DB_TABLE_NAME} WHERE id=${id}`;
+  dbConn.query(query, queryHandler(result, sendErr, sendRes));
 };
 
 User.findByName = function(name, result) {
-  const query = `SELECT * FROM ${USER_DB_TABLE_NAME} WHERE name="${name}"`;
-  dbConn.query(query, function(err, res) {
-    if (err) {
-      console.log("error: ", err);
-      result(err, null);
-    } else {
-      result(null, res);
-    }
-  });
+  const query = `SELECT * FROM ${USER_MYSQL_DB_TABLE_NAME} WHERE name="${name}"`;
+  dbConn.query(query, queryHandler(result, sendErr, sendRes));
 };
 
 User.update = function(id, user, result) {
-  const query = `UPDATE ${USER_DB_TABLE_NAME} SET `;
-  dbConn.query(query, user, function(err, res) {
-    if (err) {
-      console.log("error: ", err);
-      result(err, null);
-    } else {
-      result(null, res);
-    }
-  });
+  const query = `UPDATE ${USER_MYSQL_DB_TABLE_NAME} SET ? WHERE id=${id}`;
+  dbConn.query(query, user, queryHandler(result, sendErr, sendRes));
 };
 
 User.delete = function(id, result) {
-  const query = `DELETE FROM ${USER_DB_TABLE_NAME} WHERE id=${id}`;
-  dbConn.query(query, function(err, res) {
-    if (err) {
-      console.log("error: ", err);
-      result(err, null);
-    } else {
-      result(null, res);
-    }
-  });
+  const query = `DELETE FROM ${USER_MYSQL_DB_TABLE_NAME} WHERE id=${id}`;
+  dbConn.query(query, queryHandler(result, sendErr, sendRes));
 };
+
+User.getToken = function(id, result) {
+  redisClient.get(id, queryHandler(result, sendErr, sendRes));
+}
+
+User.setToken = function(id, token, result) {
+  redisClient.set(id, token, "EX", USER_REDIS_TOKEN_TTL, queryHandler(result, sendErr, sendRes));
+}
 
 module.exports = User;
