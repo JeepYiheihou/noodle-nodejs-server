@@ -15,8 +15,8 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const contentSqlRoutes = require("./content/routes/content_sql_routes");
-const userSqlRoutes = require("./user/routes/user_sql_routes");
+const contentRoutes = require("./content/routes/content_routes");
+const userRoutes = require("./user/routes/user_routes");
 const videoRoutes = require("./video/routes/video_routes");
 
 app.get("/", function(req, res) {
@@ -25,8 +25,8 @@ app.get("/", function(req, res) {
 
 // Attach routers.
 app.use(VIDEO_REQUEST_PREFIX, videoRoutes);
-app.use(USER_REQUEST_PREFIX, userSqlRoutes);
-app.use(CONTENT_API_PREFIX, contentSqlRoutes);
+app.use(USER_REQUEST_PREFIX, userRoutes);
+app.use(CONTENT_API_PREFIX, contentRoutes);
 
 // Start the server
 app.listen(3000, function () {

@@ -2,7 +2,7 @@
 
 const express = require("express");
 const router = express.Router();
-const userController = require("../controllers/user_sql_controller");
+const userController = require("../controllers/user_controller");
 
 // Retrieve all users.
 router.get("/find-all", userController.findAll);

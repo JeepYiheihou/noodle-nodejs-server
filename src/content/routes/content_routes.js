@@ -2,7 +2,7 @@
 
 const express = require("express");
 const router = express.Router();
-const contentController = require("../controllers/content_sql_controller");
+const contentController = require("../controllers/content_controller");
 
 // Retrieve all contents.
 router.get("/find-all", contentController.findAll);
