@@ -3,7 +3,7 @@
 const constants = require("../constants");
 const USER_REDIS_TOKEN_TTL = constants.USER_REDIS_TOKEN_TTL;
 
-var rand = function() {
+const rand = function() {
   return Math.random().toString(36).substr(2);
 };
 

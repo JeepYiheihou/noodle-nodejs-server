@@ -16,7 +16,7 @@ const constants = Object.freeze({
   // User Redis token cache configs
   USER_REDIS_HOST_IP: "127.0.0.1",
   USER_REDIS_HOST_PORT: 6379,
-  USER_REDIS_TOKEN_TTL: 5,
+  USER_REDIS_TOKEN_TTL: 1 * 60 * 60,
 
   // Content My Sql database configs
   CONTENT_MYSQL_DB_HOST_IP: "127.0.0.1",

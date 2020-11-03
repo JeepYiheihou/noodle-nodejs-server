@@ -1,8 +1,11 @@
 "use strict";
 
-const fs = require("fs")
+const fs = require("fs");
 
-exports.get = function(req, res) {
+const tokenValidator = require("../../utils/controllers/token_validator");
+const checkToken = tokenValidator.checkToken;
+
+function _get(req, res) {
   const fileName = req.params.videoPath;
   const filePath = `../videos/${fileName}`;
   const stat = fs.statSync(filePath);
@@ -33,4 +36,8 @@ exports.get = function(req, res) {
     res.writeHead(200, head);
     fs.createReadStream(filePath).pipe(res);
   }
+}
+
+exports.get = function(req, res) {
+  checkToken(req, res, _get);
 };

@@ -23,13 +23,13 @@ exports.sendErr = function(res, err) {
 }
 
 // Normal way to handle response: send it in JSON format.
-exports.sendData = function(res, resBack) {
-  res.json(resBack);
+exports.sendData = function(res, data) {
+  res.json(data);
 }
 
 // Normal way to handle response: send a success message.
 exports.sendMessage = function(res, message) {
-  return function(res, resBack) {
+  return function(res, data) {
     // In this case the resBack is not used, since we don't expose it.
     // We just send a message to front end client.
     res.json({ error: false, message: message });
@@ -38,7 +38,7 @@ exports.sendMessage = function(res, message) {
 
 // Handler response: send both message and response data.
 exports.sendMessageAndData = function(res, message) {
-  return function(res, resBack) {
-    res.json({ error: false, message: message, data: resBack });
+  return function(res, data) {
+    res.json({ error: false, message: message, data: data });
   }
 }

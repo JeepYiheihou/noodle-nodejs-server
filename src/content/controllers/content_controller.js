@@ -8,8 +8,12 @@ const sendData = genericCtrHandler.sendData;
 const sendMessage = genericCtrHandler.sendMessage;
 const sendMessageAndData = genericCtrHandler.sendMessageAndData;
 
-// Define create API behavior.
-exports.create = function(req, res) {
+const tokenValidator = require("../../utils/controllers/token_validator");
+const checkToken = tokenValidator.checkToken;
+
+// ======================== Private APIs ========================
+
+function _create(req, res) {
   const newContent = new Content(req.body);
   if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
     res.status(400).send({ error: true, message: "Please provide all required field." });
@@ -17,35 +21,68 @@ exports.create = function(req, res) {
     const message = "Content added successfully!";
     Content.create(newContent, ctrHandler(res,sendErr, sendMessageAndData(message)));
   }
-};
+}
 
-// Define findAll API behavior.
-exports.findAll = function(req, res) {
+function _findAll(req, res) {
   Content.findAll(ctrHandler(res, sendErr, sendData));
-};
+}
 
-// Define findByRange API behavior.
-exports.findByRange = function(req, res) {
+function _findByRange(req, res) {
   Content.findByRange(req.query.start, req.query.end, ctrHandler(res, sendErr, sendData));
-};
+}
 
-// Define findById API behavior.
-exports.findById = function(req, res) {
+function _findById(req, res) {
   Content.findById(req.params.id, ctrHandler(res, sendErr, sendData));
-};
+}
 
-// Define update API behavior.
-exports.update = function(req, res) {
+function _update(req, res) {
   if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
     res.status(400).send({ error: true, message: "Please provide all required field." })
   } else {
     const message = "Content successfully updated.";
     Content.update(req.params.id, new Content(req.body), ctrHandler(res, sendErr, sendMessage(message)));
   }
+}
+
+function _delete(req, res) {
+  const message = "Content successfully deleted.";
+  Content.delete(req.params.id, ctrHandler(res, sendErr, sendMessage(message)));
+}
+
+// ======================== Public APIs ========================
+
+// Define create API behavior.
+// Token is required.
+exports.create = function(req, res) {
+  checkToken(req, res, _create);
+};
+
+// Define findAll API behavior.
+// Token is required.
+exports.findAll = function(req, res) {
+  checkToken(req, res, _findAll);
+};
+
+// Define findByRange API behavior.
+// Token is required.
+exports.findByRange = function(req, res) {
+  checkToken(req, res, _findByRange);
+};
+
+// Define findById API behavior.
+// Token is required.
+exports.findById = function(req, res) {
+  checkToken(req, res, _findById);
+};
+
+// Define update API behavior.
+// Token is required.
+exports.update = function(req, res) {
+  checkToken(req, res, _update);
 };
 
 // Define delete API behavior.
+// Token is required.
 exports.delete = function(req, res) {
-  const message = "Content successfully deleted.";
-  Content.delete(req.params.id, ctrHandler(res, sendErr, sendMessage(message)));
+  checkToken(req, res, _delete);
 };
