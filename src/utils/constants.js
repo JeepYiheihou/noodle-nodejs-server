@@ -2,9 +2,10 @@
 
 const constants = Object.freeze({
   // HTTP route prefixes
-  VIDEO_REQUEST_PREFIX: "/api/video/",
   USER_REQUEST_PREFIX: "/api/user/",
-  CONTENT_API_PREFIX: "/api/content/",
+  CONTENT_REQUEST_PREFIX: "/api/content/",
+  THUMB_REQUEST_PREFIX: "/api/thumb/",
+  VIDEO_REQUEST_PREFIX: "/api/video/",
 
   // User MySql database configs
   USER_MYSQL_DB_HOST_IP: "127.0.0.1",

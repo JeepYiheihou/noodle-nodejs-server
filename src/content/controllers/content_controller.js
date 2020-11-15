@@ -7,6 +7,7 @@ const sendErr = genericCtrHandler.sendErr;
 const sendData = genericCtrHandler.sendData;
 const sendMessage = genericCtrHandler.sendMessage;
 const sendMessageAndData = genericCtrHandler.sendMessageAndData;
+const sendWrappedContentData = genericCtrHandler.sendWrappedContentData;
 
 const tokenValidator = require("../../utils/controllers/token_validator");
 const checkToken = tokenValidator.checkToken;
@@ -24,11 +25,11 @@ function _create(req, res) {
 }
 
 function _findAll(req, res) {
-  Content.findAll(ctrHandler(res, sendErr, sendData));
+  Content.findAll(ctrHandler(res, sendErr, sendWrappedContentData));
 }
 
 function _findByRange(req, res) {
-  Content.findByRange(req.query.start, req.query.end, ctrHandler(res, sendErr, sendData));
+  Content.findByRange(req.query.start, req.query.end, ctrHandler(res, sendErr, sendWrappedContentData));
 }
 
 function _findById(req, res) {

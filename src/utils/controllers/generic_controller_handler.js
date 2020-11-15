@@ -42,3 +42,8 @@ exports.sendMessageAndData = function(res, message) {
     res.json({ error: false, message: message, data: data });
   }
 }
+
+// Handler response: wrap and send the response data of contents.
+exports.sendWrappedContentData = function(res, data) {
+    res.json({totalHits: data.length, hits: data })
+}

@@ -36,7 +36,7 @@ Content.findAll = function(result) {
 
 Content.findByRange = function(start, end, result) {
   const query = `SELECT * FROM ${CONTENT_MYSQL_DB_TABLE_NAME} \
-                 ORDER BY id DESC LIMIT ${start},${end - start}`;
+                 ORDER BY id DESC LIMIT ${start},${end - start + 1}`;
   dbConn.query(query, queryHandler(result, sendErr, sendRes));
 }
 

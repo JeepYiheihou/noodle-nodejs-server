@@ -36,8 +36,9 @@ function sendWithToken(res, users, token) {
     if (err) {
       res.send(err);
     } else {
-      users.push(tokenGenerator.makeJSON(token));
-      res.json(users);
+      var user = users[0];
+      user["token"] = tokenGenerator.makeJSON(token);
+      res.json(user);
     }
   };
 };
