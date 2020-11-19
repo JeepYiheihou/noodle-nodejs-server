@@ -10,7 +10,8 @@ const USER_MYSQL_DB_DATABASE_NAME = constants.USER_MYSQL_DB_DATABASE_NAME;
 // Initiate mysql client
 const mysql = require("mysql2");
 
-const dbConn = mysql.createConnection({
+const pool  = mysql.createPool({
+  connectionLimit: 10,
   host: USER_MYSQL_DB_HOST_IP,
   port: USER_MYSQL_DB_PORT,
   user: USER_MYSQL_DB_USER_NAME,
@@ -18,9 +19,6 @@ const dbConn = mysql.createConnection({
   database: USER_MYSQL_DB_DATABASE_NAME
 });
 
-dbConn.connect(function(err) {
-  if (err) throw err;
-  console.log("User database connected!");
-});
+console.log("User database connected!");
 
-module.exports = dbConn;
+module.exports = pool;
