@@ -5,6 +5,7 @@ const VIDEO_REQUEST_PREFIX = constants.VIDEO_REQUEST_PREFIX;
 const USER_REQUEST_PREFIX = constants.USER_REQUEST_PREFIX;
 const CONTENT_REQUEST_PREFIX = constants.CONTENT_REQUEST_PREFIX;
 const THUMB_REQUEST_PREFIX = constants.THUMB_REQUEST_PREFIX;
+const SERVER_PORT = constants.SERVER_PORT;
 
 // Initiate expressjs server
 const fs = require("fs");
@@ -39,4 +40,6 @@ app.use(THUMB_REQUEST_PREFIX, thumbRoutes);
 
 // Start the server
 const httpsServer = https.createServer(credentials, app);
-httpsServer.listen(3000)
+httpsServer.listen(SERVER_PORT, ()=>{
+  console.log(`Listening on port ${SERVER_PORT}`);
+});

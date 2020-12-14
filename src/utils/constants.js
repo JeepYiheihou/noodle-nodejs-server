@@ -1,6 +1,8 @@
 "use strict";
 
 const constants = Object.freeze({
+  // nodejs server listening port
+  SERVER_PORT: 3000,
   // HTTP route prefixes
   USER_REQUEST_PREFIX: "/api/user/",
   CONTENT_REQUEST_PREFIX: "/api/content/",

@@ -19,6 +19,6 @@ const pool  = mysql.createPool({
   database: CONTENT_MYSQL_DB_DATABASE_NAME
 });
 
-console.log("Conetent database connected")
+console.log("Content database connected")
 
 module.exports = pool;
