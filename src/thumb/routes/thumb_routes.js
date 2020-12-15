@@ -11,4 +11,4 @@ router.get("/:thumbPath", thumbController.get);
 
 // TODO: delete a thumb
 
-module.exports = router
+module.exports = router;

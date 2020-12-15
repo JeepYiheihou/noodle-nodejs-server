@@ -1,7 +1,7 @@
 "use strict";
 
 const fs = require("fs");
-const path = require('path');
+const path = require("path");
 
 const tokenValidator = require("../../utils/controllers/token_validator");
 const checkToken = tokenValidator.checkToken;
@@ -13,5 +13,5 @@ function _get(req, res) {
 }
 
 exports.get = function(req, res) {
-  checkToken(req, res, _get)
+  checkToken(req, res, _get);
 }

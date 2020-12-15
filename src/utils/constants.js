@@ -4,6 +4,7 @@ const constants = Object.freeze({
   // nodejs server listening port
   SERVER_PORT: 3000,
   // HTTP route prefixes
+  LOGO_REQUEST_PREFIX: "/api/logo/",
   USER_REQUEST_PREFIX: "/api/user/",
   CONTENT_REQUEST_PREFIX: "/api/content/",
   THUMB_REQUEST_PREFIX: "/api/thumb/",

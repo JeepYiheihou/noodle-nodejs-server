@@ -1,6 +1,7 @@
 "use strict";
 
 const constants = require("./utils/constants");
+const LOGO_REQUEST_PREFIX = constants.LOGO_REQUEST_PREFIX;
 const VIDEO_REQUEST_PREFIX = constants.VIDEO_REQUEST_PREFIX;
 const USER_REQUEST_PREFIX = constants.USER_REQUEST_PREFIX;
 const CONTENT_REQUEST_PREFIX = constants.CONTENT_REQUEST_PREFIX;
@@ -23,6 +24,7 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+const logoRoutes = require("./logo/routes/logo_routes");
 const contentRoutes = require("./content/routes/content_routes");
 const userRoutes = require("./user/routes/user_routes");
 const videoRoutes = require("./video/routes/video_routes");
@@ -33,6 +35,7 @@ app.get("/", function(req, res) {
 });
 
 // Attach routers.
+app.use(LOGO_REQUEST_PREFIX, logoRoutes);
 app.use(VIDEO_REQUEST_PREFIX, videoRoutes);
 app.use(USER_REQUEST_PREFIX, userRoutes);
 app.use(CONTENT_REQUEST_PREFIX, contentRoutes);
