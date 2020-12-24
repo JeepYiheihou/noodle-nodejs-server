@@ -8,7 +8,7 @@ const userController = require("../controllers/user_controller");
 router.get("/find-all", userController.findAll);
 
 // Create a new user.
-router.post("/", userController.create);
+router.post("/create", userController.create);
 
 // Retrieve a single content with id.
 router.get("/id/:id", userController.findById);

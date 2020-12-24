@@ -55,35 +55,35 @@ function _delete(req, res) {
 // Define create API behavior.
 // Token is required.
 exports.create = function(req, res) {
-  checkToken(req, res, _create);
+  _create(req, res);
 };
 
 // Define findAll API behavior.
 // Token is required.
 exports.findAll = function(req, res) {
-  checkToken(req, res, _findAll);
+  _findAll(req, res);
 };
 
 // Define findByRange API behavior.
 // Token is required.
 exports.findByRange = function(req, res) {
-  checkToken(req, res, _findByRange);
+  _findByRange(req, res);
 };
 
 // Define findById API behavior.
 // Token is required.
 exports.findById = function(req, res) {
-  checkToken(req, res, _findById);
+  _findById(req, res);
 };
 
 // Define update API behavior.
 // Token is required.
 exports.update = function(req, res) {
-  checkToken(req, res, _update);
+  _update(req, res);
 };
 
 // Define delete API behavior.
 // Token is required.
 exports.delete = function(req, res) {
-  checkToken(req, res, _delete);
+  _delete(req, res);
 };

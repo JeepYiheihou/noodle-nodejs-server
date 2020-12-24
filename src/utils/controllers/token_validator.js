@@ -2,26 +2,25 @@
 
 const User = require("../../user/models/user_model");
 
-exports.checkToken = function(req, res, callback) {
+exports.checkToken = async function(req, res) {
   // TODO: a backdoor to always whitelist user with name "admin".
   if (req.query.name === "admin") {
-    callback(req, res);
-    return;
+    return true;
   }
   if (!req.query.id || !req.query.token) {
     res.status(400).send({ error: true, message: "Please provide an id and token" });
-    return;
+    return false;
   }
-  User.getToken(req.query.id, function(err, token) {
-    if (err) {
-      console.log(err);
-      res.send(err);
+
+  try {
+    const token = await User.getToken(req.query.id);
+    if (token === req.query.token) {
+      return true;
     } else {
-      if (token === req.query.token) {
-        callback(req, res);
-      } else {
-        res.status(400).send({ error: true, message: "Invalid token." });
-      }
+      res.status(400).send({ error: true, message: "Invalid id or token." });
+      return false;
     }
-  });
+  } catch(err) {
+    throw err;
+  }
 };

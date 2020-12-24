@@ -39,5 +39,5 @@ function _get(req, res) {
 }
 
 exports.get = function(req, res) {
-  checkToken(req, res, _get);
+  _get(req, res);
 };

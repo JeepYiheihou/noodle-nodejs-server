@@ -1,6 +1,7 @@
 "use strict";
 
 const tokenGenerator = require("../../utils/controllers/token_generator");
+const datetimeGenerator = require("../../utils/controllers/datetime_generator");
 const genericCtrHandler = require("../../utils/controllers/generic_controller_handler");
 const ctrHandler = genericCtrHandler.ctrHandler;
 const sendErr = genericCtrHandler.sendErr;
@@ -15,82 +16,184 @@ const User = require("../models/user_model");
 
 // ======================== Private APIs ========================
 
-function handleGetToken(res, users) {
-  return function(err, token) {
-    if (err) {
-      res.send(err);
-    } else {
-      const user = users[0];
-      if (token) {
-        users.push(tokenGenerator.makeJSON(token));
-        res.json(users);
-      } else {
-        res.json({error: true, message: "Token not found."});
-      }
+function _errInvalidAuthorization(res) {
+  res.status(400).send({ error: true, message: "You don't have the authorization to do this." });
+}
+
+function _errInvalidUserPassword(res) {
+  res.status(400).send({ error: true, message: "Invalid user or password." });
+}
+
+function _errUserAlreadyExisted(res) {
+  res.status(400).send({ error: true, message: "User already existed with this email." });
+}
+
+function _errUserNotFound(res) {
+  res.status(400).send({ error: true, message: "User not found." });
+}
+
+function _errFieldsRequired(res) {
+  res.status(400).send({ error: true, message: "Please provide all required field." });
+}
+
+function _errDetectedThrownError(res) {
+  res.status(400).send({ error: true, message: "Error detected!" });
+}
+
+async function _create(req, res) {
+  /* Check request body. */
+  if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    _errFieldsRequired(res);
+    return;
+  }
+
+  try {
+    /* Check no users are using this email. */
+    const userList = await User.findByEmail(req.body.email);
+    if (userList.length != 0) {
+      _errUserAlreadyExisted(res);
+      return;
     }
+
+    /* Create new user. */
+    const newUser = new User(req.body);
+    newUser.createdTime = datetimeGenerator.generateDateTime();
+
+    /* Insert it to database. */
+    const response = await User.create(newUser);
+    const message = "User successfully created!";
+    res.json({ error: false, message: message, insertId: response.insertId });
+  } catch (err) {
+    console.log(err);
+    _errDetectedThrownError(res)
   }
 }
 
-function sendWithToken(res, users, token) {
-  return function(err, resFromQuery) {
-    if (err) {
-      res.send(err);
-    } else {
-      var user = users[0];
-      user["token"] = tokenGenerator.makeJSON(token);
+async function _findAll(req, res) {
+  try {
+    /* Check token of the request */
+    if (!await checkToken(req, res)) { return; }
+
+    const userList = await User.findAll();
+    res.json(userList);
+  } catch (err) {
+    console.log(err);
+    _errDetectedThrownError(res);
+  }
+}
+
+async function _findById(req, res) {
+  try {
+    /* Check token of the request */
+    if (!await checkToken(req, res)) { return; }
+
+    const userList = await User.findById(req.params.id);
+    /* Check that the user is found. */
+    if (userList.length == 1) {
+      const user = userList[0];
       res.json(user);
-    }
-  };
-};
-
-function _create(req, res) {
-  const newUser = new User(req.body);
-  console.log(req.body);
-  if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
-    res.status(400).send({ error: true, message: "Please provide all required field." });
-  } else {
-    const message = "User added successfully!";
-    User.create(newUser, ctrHandler(res,sendErr, sendMessageAndData(message)));
-  }
-}
-
-function _findAll(req, res) {
-  User.findAll(ctrHandler(res, sendErr, sendData));
-}
-
-function _findById(req, res) {
-  User.findById(req.params.id, ctrHandler(res, sendErr, sendData));
-}
-
-function _update(req, res) {
-  if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
-    res.status(400).send({ error: true, message: "Please provide all required field." })
-  } else {
-    const message = "User successfully updated.";
-    User.update(req.params.id, new User(req.body),
-                ctrHandler(res, sendErr, sendMessage(message)));
-  }
-}
-
-function _delete(req, res) {
-  const message = "User successfully deleted."
-  User.delete(req.params.id, ctrHandler(res, sendErr, sendMessage(message)));
-}
-
-function _login(req, res) {
-  User.findByName(req.body.name, function(err, users) {
-    if (err) {
-      res.send(err);
+    } else if (userList.length == 0) {
+      _errUserNotFound(res);
     } else {
-      if (users && users.length == 1 && req.body.password === users[0].password) {
-        const user = users[0];
-        var newToken = tokenGenerator.generate();
-        User.setToken(user.id, newToken, sendWithToken(res, users, newToken));
-      } else {
-        res.status(400).send({ error: true, message: "Invalid user or password"});
-      }
+      throw userList;
     }
-  });
+  } catch(err) {
+    console.log(err);
+    _errDetectedThrownError(res);
+  }
+}
+
+async function _update(req, res) {
+
+  /* Check if the user has the right to operate UPDATE. */
+  if (req.params.id != req.query.id) {
+    _errInvalidAuthorization(res);
+    return;
+  }
+
+  if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    _errFieldsRequired(res);
+    return;
+  }
+
+  try {
+    /* Check token of the request */
+    if (!await checkToken(req, res)) { return; }
+
+    /* Udpate the fields into database. */
+    const response = await User.update(req.params.id, req.body);
+    var message;
+    if (response.affectedRows == 1) {
+      message = "User successfully updated.";
+    } else if (response.affectedRows == 0) {
+      message = "Cannot find the user with given id. Maybe already deleted.";
+    } else {
+      throw response;
+    }
+    res.json({ error: false, message: message });
+  } catch(err) {
+    console.log(err);
+    _errDetectedThrownError(res);
+  }
+}
+
+async function _delete(req, res) {
+
+  /* Check if the user has the right to operate DELETE. */
+  if (req.params.id != req.query.id) {
+    _errInvalidAuthorization(res);
+    return;
+  }
+
+  try {
+    /* Check token of the request */
+    if (!await checkToken(req, res)) { return; }
+
+    /* Delete the record from database. */
+    const response = await User.delete(req.params.id);
+    var message;
+    if (response.affectedRows == 1) {
+      message = "User successfully deleted."
+    } else if (response.affectedRows == 0) {
+      message = "User doesn't exist.";
+    } else {
+      throw response;
+    }
+    res.json({ error: false, message: message });
+  } catch(err) {
+    console.log(err);
+    _errDetectedThrownError(res)
+  }
+}
+
+async function _login(req, res) {
+  try {
+    const userList = await User.findByName(req.body.name);
+
+    /* Check that we only find one entry. */
+    if (userList.length == 0) {
+      _errInvalidUserPassword(res);
+      return;
+    } else if (userList.length != 1) {
+      throw userList;
+    }
+
+    /* Check that password matches. */
+    const user = userList[0];
+    if (user.password != req.body.password) {
+      _errInvalidUserPassword(res);
+      return;
+    }
+
+    /* Generate new token and SET it into redis. */
+    var newToken = tokenGenerator.generate();
+    await User.setToken(user.id, newToken);
+    user["token"] = tokenGenerator.makeJSON(newToken);
+    res.json(user);
+  } catch (err) {
+    console.log(err);
+    _errDetectedThrownError(res)
+  }
 }
 
 // ======================== Public APIs ========================
@@ -104,26 +207,26 @@ exports.create = function(req, res) {
 // Define findAll API behavior.
 // Token check is required.
 exports.findAll = function(req, res) {
-  checkToken(req, res, _findAll);
+  _findAll(req, res);
 };
 
 // Define findById API behavior.
 // Token check is required.
 exports.findById = function(req, res) {
-  checkToken(req, res, _findById);
+  _findById(req, res);
 };
 
 // Define update API behavior.
 // Token check is required.
 exports.update = function(req, res) {
-  checkToken(req, res, _update);
+  _update(req, res);
 };
 
 
 // Define delete API behavior.
 // Token check is required.
 exports.delete = function(req, res) {
-  checkToken(req, res, _delete);
+  _delete(req, res);
 };
 
 // Define login API behavior.

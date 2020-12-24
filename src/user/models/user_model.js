@@ -1,5 +1,7 @@
 "use strict";
 
+const { promisify } = require("util");
+
 const constants = require("./../../utils/constants");
 const USER_MYSQL_DB_TABLE_NAME = constants.USER_MYSQL_DB_TABLE_NAME;
 const USER_REDIS_TOKEN_TTL = constants.USER_REDIS_TOKEN_TTL;
@@ -26,42 +28,104 @@ var User = function(user) {
   this.phone = user.phone;
 }
 
-User.create = function(newUser, result) {
+const dbPoolPromise = dbConnPool.promise();
+const redisGetPromise = promisify(redisClient.get).bind(redisClient);
+const redisSetPromise = promisify(redisClient.set).bind(redisClient);
+
+
+User.create = async function(newUser) {
   const query = `INSERT INTO ${USER_MYSQL_DB_TABLE_NAME} SET ? `;
-  dbConnPool.query(query, newUser, queryHandler(result, sendErr, sendResInsertId));
+  try {
+    const rawData = await dbPoolPromise.query(query, newUser);
+    const response = rawData[0];
+    return response;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
 };
 
-User.findAll = function(result) {
+User.findAll = async function() {
   const query = `SELECT * FROM ${USER_MYSQL_DB_TABLE_NAME}`;
-  dbConnPool.query(query, queryHandler(result, sendErr, sendRes));
+  try {
+    const rawData = await dbPoolPromise.query(query);
+    const userList = rawData[0];
+    return userList;
+  } catch(err) {
+    throw err;
+  }
 };
 
-User.findById = function (id, result) {
+User.findById = async function (id) {
   const query = `SELECT * FROM ${USER_MYSQL_DB_TABLE_NAME} WHERE id=${id}`;
-  dbConnPool.query(query, queryHandler(result, sendErr, sendRes));
+  try {
+    const rawData = await dbPoolPromise.query(query);
+    const userList = rawData[0];
+    return userList;
+  } catch(err) {
+    throw err;
+  }
 };
 
-User.findByName = function(name, result) {
+User.findByName = async function(name) {
   const query = `SELECT * FROM ${USER_MYSQL_DB_TABLE_NAME} WHERE name="${name}"`;
-  dbConnPool.query(query, queryHandler(result, sendErr, sendRes));
+  try {
+    const rawData = await dbPoolPromise.query(query);
+    const userList = rawData[0];
+    return userList;
+  } catch (err) {
+    throw err;
+  }
 };
 
-User.update = function(id, user, result) {
+User.findByEmail = async function(email) {
+  const query = `SELECT * FROM ${USER_MYSQL_DB_TABLE_NAME} WHERE email="${email}"`;
+  try {
+    const rawData = await dbPoolPromise.query(query);
+    const userList = rawData[0];
+    return userList;
+  } catch (err) {
+    throw err;
+  }
+};
+
+User.update = async function(id, userFields) {
   const query = `UPDATE ${USER_MYSQL_DB_TABLE_NAME} SET ? WHERE id=${id}`;
-  dbConnPool.query(query, user, queryHandler(result, sendErr, sendRes));
+  try {
+    const rawData = await dbPoolPromise.query(query, userFields);
+    const response = rawData[0];
+    return response;
+  } catch(err) {
+    throw err;
+  }
 };
 
-User.delete = function(id, result) {
+User.delete = async function(id) {
   const query = `DELETE FROM ${USER_MYSQL_DB_TABLE_NAME} WHERE id=${id}`;
-  dbConnPool.query(query, queryHandler(result, sendErr, sendRes));
+  try {
+    const rawData = await dbPoolPromise.query(query);
+    const response = rawData[0];
+    return response;
+  } catch(err) {
+    throw err;
+  }
 };
 
-User.getToken = function(id, result) {
-  redisClient.get(id, queryHandler(result, sendErr, sendRes));
+User.getToken = async function(id) {
+  try {
+    const token = await redisGetPromise(id);
+    return token;
+  } catch (err) {
+    throw err;
+  }
 }
 
-User.setToken = function(id, token, result) {
-  redisClient.set(id, token, "EX", USER_REDIS_TOKEN_TTL, queryHandler(result, sendErr, sendRes));
+User.setToken = async function(id, token) {
+  try {
+    await redisSetPromise(id, token);
+  } catch (err) {
+    throw err;
+  }
 }
 
 module.exports = User;
