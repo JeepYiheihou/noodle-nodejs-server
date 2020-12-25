@@ -16,6 +16,10 @@ function _errFieldsRequired(res) {
   res.status(400).send({ error: true, message: "Please provide all required field." });
 }
 
+function _wrapContentListToJsonResponse(contentList) {
+  return { totalHits: contentList.length, hits: contentList };
+}
+
 async function _create(req, res) {
   try {
     /* Check token of the request */
@@ -42,7 +46,7 @@ async function _findAll(req, res) {
     if (!await checkToken(req, res)) { return; }
 
     const contentList = await Content.findAll();
-    res.json(contentList);
+    res.json(_wrapContentListToJsonResponse(contentList));
   } catch(err) {
     console.log(err);
     _errDetectedThrownError(res);
@@ -55,7 +59,7 @@ async function _findByRange(req, res) {
     if (!await checkToken(req, res)) { return; }
 
     const contentList = await Content.findByRange(req.query.start, req.query.end);
-    res.json(contentList);
+    res.json(_wrapContentListToJsonResponse(contentList));
   } catch(err) {
     console.log(err);
     _errDetectedThrownError(res);

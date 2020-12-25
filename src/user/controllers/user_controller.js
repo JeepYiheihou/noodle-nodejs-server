@@ -33,6 +33,10 @@ function _errDetectedThrownError(res) {
   res.status(400).send({ error: true, message: "Error detected in user part!" });
 }
 
+function _wrapUserListToJsonResponse(userList) {
+  return { totalHits: userList.length, hits: userList };
+}
+
 async function _create(req, res) {
 
   try {
@@ -69,7 +73,7 @@ async function _findAll(req, res) {
     if (!await checkToken(req, res)) { return; }
 
     const userList = await User.findAll();
-    res.json(userList);
+    res.json(_wrapUserListToJsonResponse(userList));
   } catch (err) {
     console.log(err);
     _errDetectedThrownError(res);
