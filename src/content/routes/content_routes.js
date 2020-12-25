@@ -11,7 +11,7 @@ router.get("/find-all", contentController.findAll);
 router.get("/find-by-range", contentController.findByRange);
 
 // Create a new content.
-router.post("/", contentController.create);
+router.post("/create/", contentController.create);
 
 // Retrieve a single content with id.
 router.get("/id/:id", contentController.findById);

@@ -1,14 +1,7 @@
 "use strict";
 
-const tokenGenerator = require("../../utils/controllers/token_generator");
 const datetimeGenerator = require("../../utils/controllers/datetime_generator");
-const genericCtrHandler = require("../../utils/controllers/generic_controller_handler");
-const ctrHandler = genericCtrHandler.ctrHandler;
-const sendErr = genericCtrHandler.sendErr;
-const sendData = genericCtrHandler.sendData;
-const sendMessage = genericCtrHandler.sendMessage;
-const sendMessageAndData = genericCtrHandler.sendMessageAndData;
-
+const tokenGenerator = require("../../utils/controllers/token_generator");
 const tokenValidator = require("../../utils/controllers/token_validator");
 const checkToken = tokenValidator.checkToken;
 
@@ -37,17 +30,18 @@ function _errFieldsRequired(res) {
 }
 
 function _errDetectedThrownError(res) {
-  res.status(400).send({ error: true, message: "Error detected!" });
+  res.status(400).send({ error: true, message: "Error detected in user part!" });
 }
 
 async function _create(req, res) {
-  /* Check request body. */
-  if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
-    _errFieldsRequired(res);
-    return;
-  }
 
   try {
+    /* Check request body. */
+    if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
+      _errFieldsRequired(res);
+      return;
+    }
+
     /* Check no users are using this email. */
     const userList = await User.findByEmail(req.body.email);
     if (userList.length != 0) {
@@ -62,10 +56,10 @@ async function _create(req, res) {
     /* Insert it to database. */
     const response = await User.create(newUser);
     const message = "User successfully created!";
-    res.json({ error: false, message: message, insertId: response.insertId });
+    res.json({ error: false, message: message, id: response.insertId });
   } catch (err) {
     console.log(err);
-    _errDetectedThrownError(res)
+    _errDetectedThrownError(res);
   }
 }
 
@@ -104,21 +98,20 @@ async function _findById(req, res) {
 }
 
 async function _update(req, res) {
-
   /* Check if the user has the right to operate UPDATE. */
   if (req.params.id != req.query.id) {
     _errInvalidAuthorization(res);
     return;
   }
 
-  if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
-    _errFieldsRequired(res);
-    return;
-  }
-
   try {
     /* Check token of the request */
     if (!await checkToken(req, res)) { return; }
+
+    if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
+      _errFieldsRequired(res);
+      return;
+    }
 
     /* Udpate the fields into database. */
     const response = await User.update(req.params.id, req.body);
@@ -138,7 +131,6 @@ async function _update(req, res) {
 }
 
 async function _delete(req, res) {
-
   /* Check if the user has the right to operate DELETE. */
   if (req.params.id != req.query.id) {
     _errInvalidAuthorization(res);
@@ -153,7 +145,7 @@ async function _delete(req, res) {
     const response = await User.delete(req.params.id);
     var message;
     if (response.affectedRows == 1) {
-      message = "User successfully deleted."
+      message = "User successfully deleted.";
     } else if (response.affectedRows == 0) {
       message = "User doesn't exist.";
     } else {
@@ -162,7 +154,7 @@ async function _delete(req, res) {
     res.json({ error: false, message: message });
   } catch(err) {
     console.log(err);
-    _errDetectedThrownError(res)
+    _errDetectedThrownError(res);
   }
 }
 

@@ -9,12 +9,6 @@ const USER_REDIS_TOKEN_TTL = constants.USER_REDIS_TOKEN_TTL;
 const dbConnPool = require("./../db_configs/user_sql_config");
 const redisClient = require("./../db_configs/user_redis_config");
 
-const genericQueryHandler = require("./../../utils/models/generic_query_handler");
-const queryHandler = genericQueryHandler.queryHandler;
-const sendErr = genericQueryHandler.sendErr;
-const sendRes = genericQueryHandler.sendRes;
-const sendResInsertId = genericQueryHandler.sendResInsertId;
-
 // User object definition
 var User = function(user) {
   this.id = user.id;

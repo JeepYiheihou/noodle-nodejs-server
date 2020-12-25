@@ -5,12 +5,6 @@ const CONTENT_MYSQL_DB_TABLE_NAME = constants.CONTENT_MYSQL_DB_TABLE_NAME;
 
 const connPool = require("./../db_configs/content_sql_config");
 
-const genericQueryHandler = require("./../../utils/models/generic_query_handler");
-const queryHandler = genericQueryHandler.queryHandler;
-const sendErr = genericQueryHandler.sendErr;
-const sendRes = genericQueryHandler.sendRes;
-const sendResInsertId = genericQueryHandler.sendResInsertId;
-
 // Content object definition
 var Content = function(content) {
   this.id = content.id;
@@ -24,35 +18,73 @@ var Content = function(content) {
   this.length = content.length;
 }
 
-Content.create = function(newContent, result) {
+const dbPoolPromise = connPool.promise();
+
+Content.create = async function(newContent) {
   const query = `INSERT INTO ${CONTENT_MYSQL_DB_TABLE_NAME} SET ? `;
-  connPool.query(query, newContent, queryHandler(result, sendErr, sendResInsertId));
+  try {
+    const rawData = await dbPoolPromise.query(query, newContent);
+    const response = rawData[0];
+    return response;
+  } catch(err) {
+    throw err;
+  }
 };
 
-Content.findAll = function(result) {
+Content.findAll = async function() {
   const query = `SELECT * FROM ${CONTENT_MYSQL_DB_TABLE_NAME}`;
-  connPool.query(query, queryHandler(result, sendErr, sendRes));
+  try {
+    const rawData = await dbPoolPromise.query(query);
+    const contentList = rawData[0];
+    return contentList;
+  } catch(err) {
+    throw err;
+  }
 };
 
-Content.findByRange = function(start, end, result) {
+Content.findByRange = async function(start, end) {
   const query = `SELECT * FROM ${CONTENT_MYSQL_DB_TABLE_NAME} \
                  ORDER BY id DESC LIMIT ${start},${end - start + 1}`;
-  connPool.query(query, queryHandler(result, sendErr, sendRes));
+  try {
+    const rawData = await dbPoolPromise.query(query);
+    const contentList = rawData[0];
+    return contentList;
+  } catch(err) {
+    throw err;
+  }
 }
 
-Content.findById = function (id, result) {
+Content.findById = async function (id) {
   const query = `SELECT * FROM ${CONTENT_MYSQL_DB_TABLE_NAME} WHERE id=${id}`;
-  connPool.query(query, queryHandler(result, sendErr, sendRes));
+  try {
+    const rawData = await dbPoolPromise.query(query);
+    const contentList = rawData[0];
+    return contentList;
+  } catch(err) {
+    throw err;
+  }
 };
 
-Content.update = function(id, content, result) {
+Content.update = async function(id, contentFields) {
   const query = `UPDATE ${CONTENT_MYSQL_DB_TABLE_NAME} SET ? WHERE id=${id}`;
-  connPool.query(query, content, queryHandler(result, sendErr, sendRes));
+  try {
+    const rawData = await dbPoolPromise.query(query, contentFields);
+    const response = rawData[0];
+    return response;
+  } catch (err) {
+    throw err;
+  }
 };
 
-Content.delete = function(id, result) {
+Content.delete = async function(id) {
   const query = `DELETE FROM ${CONTENT_MYSQL_DB_TABLE_NAME} WHERE id=${id}`;
-  connPool.query(query, queryHandler(result, sendErr, sendRes));
+  try {
+    const rawData = await dbPoolPromise.query(query);
+    const response = rawData[0];
+    return response;
+  } catch(err) {
+    throw err;
+  }
 };
 
 module.exports = Content;
