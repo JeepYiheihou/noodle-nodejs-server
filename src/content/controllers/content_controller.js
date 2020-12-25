@@ -30,7 +30,11 @@ async function _create(req, res) {
       return;
     }
 
+    /* Create new content. */
     const newContent = new Content(req.body);
+    newContent.createdTime = datetimeGenerator.generateDateTime();
+
+    /* Insert it to database. */
     const response = await Content.create(newContent);
     const message = "Content created successfully!";
     res.json({ error: false, message: message, id: response.insertId });
