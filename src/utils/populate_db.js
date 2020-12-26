@@ -1,6 +1,6 @@
 "use strict";
 
-// A tricky script to populate large amount of data to databases.
+/* A tricky script to populate large amount of data to databases. */
 
 const constants = require("./constants");
 const CONTENT_MYSQL_DB_HOST_IP = constants.CONTENT_MYSQL_DB_HOST_IP;
@@ -12,7 +12,7 @@ const CONTENT_MYSQL_DB_TABLE_NAME = constants.CONTENT_MYSQL_DB_TABLE_NAME;
 
 const Content = require("../content/models/content_model");
 
-// Initiate mysql client
+/* Initiate mysql client */
 const mysql = require("mysql2");
 
 const dbConn = mysql.createConnection({

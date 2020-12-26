@@ -7,7 +7,7 @@ const checkToken = tokenValidator.checkToken;
 
 const User = require("../models/user_model");
 
-// ======================== Private APIs ========================
+/* ======================== Private APIs ======================== */
 
 function _errInvalidAuthorization(res) {
   res.status(400).send({ error: true, message: "You don't have the authorization to do this." });
@@ -192,41 +192,41 @@ async function _login(req, res) {
   }
 }
 
-// ======================== Public APIs ========================
+/* ======================== Public APIs ======================== */
 
-// Define create API behavior.
-// Token check is not required.
+/* Define create API behavior.
+ * Token check is not required. */
 exports.create = function(req, res) {
   _create(req, res);
 };
 
-// Define findAll API behavior.
-// Token check is required.
+/* Define findAll API behavior.
+ * Token check is required. */
 exports.findAll = function(req, res) {
   _findAll(req, res);
 };
 
-// Define findById API behavior.
-// Token check is required.
+/* Define findById API behavior.
+ * Token check is required. */
 exports.findById = function(req, res) {
   _findById(req, res);
 };
 
-// Define update API behavior.
-// Token check is required.
+/* Define update API behavior.
+ * Token check is required. */
 exports.update = function(req, res) {
   _update(req, res);
 };
 
 
-// Define delete API behavior.
-// Token check is required.
+/* Define delete API behavior.
+ * Token check is required. */
 exports.delete = function(req, res) {
   _delete(req, res);
 };
 
-// Define login API behavior.
-// Token check is not required.
+/* Define login API behavior.
+ * Token check is not required. */
 exports.login = function(req, res) {
   _login(req, res);
 };

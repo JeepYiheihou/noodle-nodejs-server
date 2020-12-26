@@ -3,7 +3,7 @@
 const User = require("../../user/models/user_model");
 
 exports.checkToken = async function(req, res) {
-  // TODO: a backdoor to always whitelist user with name "admin".
+  /* TODO: a backdoor to always whitelist user with name "admin". */
   if (req.query.name === "admin") {
     return true;
   }

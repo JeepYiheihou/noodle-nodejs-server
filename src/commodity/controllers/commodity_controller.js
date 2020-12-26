@@ -4,24 +4,24 @@ const datetimeGenerator = require("../../utils/controllers/datetime_generator");
 const tokenValidator = require("../../utils/controllers/token_validator");
 const checkToken = tokenValidator.checkToken;
 
-const Content = require("../models/content_model");
+const Commodity = require("../models/commodity_model");
 
 /* ======================== Private APIs ======================== */
 
 function _errDetectedThrownError(res) {
-  res.status(400).send({ error: true, message: "Error detected in content part!" });
+  res.status(400).send({ error: true, message: "Error detected in commodity part!" });
 }
 
 function _errFieldsRequired(res) {
   res.status(400).send({ error: true, message: "Please provide all required field." });
 }
 
-function _errContentNotFound(res) {
-  res.status(400).send({ error: true, message: "Content not found." });
+function _errCommodityNotFound(res) {
+  res.status(400).send({ error: true, message: "Commodity not found." });
 }
 
-function _wrapContentListToJsonResponse(contentList) {
-  return { totalHits: contentList.length, hits: contentList };
+function _wrapCommodityListToJsonResponse(commodityList) {
+  return { totalHits: commodityList.length, hits: commodityList };
 }
 
 async function _create(req, res) {
@@ -34,40 +34,14 @@ async function _create(req, res) {
       return;
     }
 
-    /* Create new content. */
-    const newContent = new Content(req.body);
-    newContent.createdTime = datetimeGenerator.generateDateTime();
+    /* Create new commodity. */
+    const newCommodity = new Commodity(req.body);
+    newCommodity.createdTime = datetimeGenerator.generateDateTime();
 
     /* Insert it to database. */
-    const response = await Content.create(newContent);
-    const message = "Content created successfully!";
+    const response = await Commodity.create(newCommodity);
+    const message = "Commodity created successfully!";
     res.json({ error: false, message: message, id: response.insertId });
-  } catch(err) {
-    console.log(err);
-    _errDetectedThrownError(res);
-  }
-}
-
-async function _findAll(req, res) {
-  try {
-    /* Check token of the request */
-    if (!await checkToken(req, res)) { return; }
-
-    const contentList = await Content.findAll();
-    res.json(_wrapContentListToJsonResponse(contentList));
-  } catch(err) {
-    console.log(err);
-    _errDetectedThrownError(res);
-  }
-}
-
-async function _findByRange(req, res) {
-  try {
-    /* Check token of the request */
-    if (!await checkToken(req, res)) { return; }
-
-    const contentList = await Content.findByRange(req.query.start, req.query.end);
-    res.json(_wrapContentListToJsonResponse(contentList));
   } catch(err) {
     console.log(err);
     _errDetectedThrownError(res);
@@ -79,23 +53,37 @@ async function _findById(req, res) {
     /* Check token of the request */
     if (!await checkToken(req, res)) { return; }
 
-    const contentList = await Content.findById(req.params.id);
-    /* Check that the content is found. */
-    if (contentList.length == 1) {
-      const content = contentList[0];
-      res.json(content);
-    } else if (contentList.length == 0) {
-      _errContentNotFound(res);
+    const commodityList = await Commodity.findById(req.params.id);
+    /* Check that the commodity is found. */
+    if (commodityList.length == 1) {
+      const commodity = commodityList[0];
+      res.json(commodity);
+    } else if (commodityList.length == 0) {
+      _errCommodityNotFound(res);
     } else {
-      throw contentList;
+      throw commodityList;
     }
+
   } catch(err) {
     console.log(err);
     _errDetectedThrownError(res);
   }
 }
 
-async function _update(req, res) {
+async function _findByContentId(req, res) {
+  try {
+    /* Check token of the request */
+    if (!await checkToken(req, res)) { return; }
+
+    const commodityList = await Commodity.findByContentId(req.params.id);
+    res.json(_wrapCommodityListToJsonResponse(commodityList));
+  } catch(err) {
+    console.log(err);
+    _errDetectedThrownError(res);
+  }
+}
+
+async function _udpate(req, res) {
   try {
     /* Check token of the request */
     if (!await checkToken(req, res)) { return; }
@@ -106,12 +94,12 @@ async function _update(req, res) {
     }
 
     /* Update the fields into database. */
-    const response = await Content.update(req.params.id, req.body);
+    const response = await Commodity.update(req.params.id, req.body);
     var message;
     if (response.affectedRows == 1) {
-      message = "Content successfully updated.";
+      message = "Commodity successfully updated.";
     } else if (response.affectedRows == 0) {
-      message = "Cannot find the content with given id. Maybe already deleted.";
+      message = "Cannot find the commodity with given id. Maybe already deleted.";
     } else {
       throw response;
     }
@@ -128,12 +116,12 @@ async function _delete(req, res) {
     if (!await checkToken(req, res)) { return; }
 
     /* Delete the record from database. */
-    const response = await Content.delete(req.params.id);
+    const response = await Commodity.delete(req.params.id);
     var message;
     if (response.affectedRows == 1) {
-      message = "Content successfully deleted.";
+      message = "Commodity successfully deleted.";
     } else if (response.affectedRows == 0) {
-      message = "Content doesn't exist.";
+      message = "Commodity doesn't exist.";
     } else {
       throw response;
     }
@@ -152,22 +140,16 @@ exports.create = function(req, res) {
   _create(req, res);
 };
 
-/* Define findAll API behavior.
- * Token is required. */
-exports.findAll = function(req, res) {
-  _findAll(req, res);
-};
-
-/* Define findByRange API behavior.
- * Token is required. */
-exports.findByRange = function(req, res) {
-  _findByRange(req, res);
-};
-
 /* Define findById API behavior.
  * Token is required. */
 exports.findById = function(req, res) {
   _findById(req, res);
+};
+
+/* Define findById API behavior.
+ * Token is required. */
+exports.findByContentId = function(req, res) {
+  _findByContentId(req, res);
 };
 
 /* Define update API behavior.

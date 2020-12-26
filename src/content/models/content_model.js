@@ -1,11 +1,11 @@
 "use strict";
 
-const constants = require("./../../utils/constants");
+const constants = require("../../utils/constants");
 const CONTENT_MYSQL_DB_TABLE_NAME = constants.CONTENT_MYSQL_DB_TABLE_NAME;
 
-const connPool = require("./../db_configs/content_sql_config");
+const connPool = require("../db_configs/content_sql_config");
 
-// Content object definition
+/* Content object definition. */
 var Content = function(content) {
   this.id = content.id;
   this.creater = content.creater;

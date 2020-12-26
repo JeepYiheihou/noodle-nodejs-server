@@ -1,10 +1,10 @@
 "use strict";
 
-const constants = require("./../../utils/constants");
+const constants = require("../../utils/constants");
 const USER_REDIS_HOST_IP = constants.USER_REDIS_HOST_IP;
 const USER_REDIS_HOST_PORT = constants.USER_REDIS_HOST_PORT;
 
-// Initiate redis client
+/* Initiate redis client */
 const redis = require("redis");
 
 const client = redis.createClient({

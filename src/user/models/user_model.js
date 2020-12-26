@@ -2,14 +2,14 @@
 
 const { promisify } = require("util");
 
-const constants = require("./../../utils/constants");
+const constants = require("../../utils/constants");
 const USER_MYSQL_DB_TABLE_NAME = constants.USER_MYSQL_DB_TABLE_NAME;
 const USER_REDIS_TOKEN_TTL = constants.USER_REDIS_TOKEN_TTL;
 
-const dbConnPool = require("./../db_configs/user_sql_config");
-const redisClient = require("./../db_configs/user_redis_config");
+const dbConnPool = require("../db_configs/user_sql_config");
+const redisClient = require("../db_configs/user_redis_config");
 
-// User object definition
+/* User object definition. */
 var User = function(user) {
   this.id = user.id;
   this.name = user.name;
