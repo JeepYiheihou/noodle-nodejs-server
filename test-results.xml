@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="0.0460" tests="1" failures="0">
+  <testsuite name="Root Suite" timestamp="2020-12-26T06:38:34" tests="0" time="0.0000" failures="0">
+  </testsuite>
+  <testsuite name="test user part" timestamp="2020-12-26T06:38:34" tests="1" file="/home/jiachen/workspace/startup/nodejs_video_server/test/user/test_user.js" time="0.0460" failures="0">
+    <testcase name="test user part test login successfully" time="0.0460" classname="test login successfully">
+    </testcase>
+  </testsuite>
+</testsuites>

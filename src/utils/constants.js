@@ -5,12 +5,12 @@ const constants = Object.freeze({
   SERVER_PORT: 3000,
 
   /* HTTP route prefixes */
-  LOGO_REQUEST_PREFIX: "/api/logo/",
-  USER_REQUEST_PREFIX: "/api/user/",
-  CONTENT_REQUEST_PREFIX: "/api/content/",
+  LOGO_REQUEST_PREFIX: "/api/logo",
+  USER_REQUEST_PREFIX: "/api/user",
+  CONTENT_REQUEST_PREFIX: "/api/content",
   COMMODITY_REQUEST_PREFIX: "/api/commodity",
-  THUMB_REQUEST_PREFIX: "/api/thumb/",
-  VIDEO_REQUEST_PREFIX: "/api/video/",
+  THUMB_REQUEST_PREFIX: "/api/thumb",
+  VIDEO_REQUEST_PREFIX: "/api/video",
 
   /* User MySql database configs */
   USER_MYSQL_DB_HOST_IP: "127.0.0.1",

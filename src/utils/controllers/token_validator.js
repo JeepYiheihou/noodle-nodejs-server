@@ -3,10 +3,17 @@
 const User = require("../../user/models/user_model");
 
 exports.checkToken = async function(req, res) {
-  /* TODO: a backdoor to always whitelist user with name "admin". */
-  if (req.query.name === "admin") {
+
+  var testMode = false
+  process.argv.forEach((val, index) => {
+    if (val === "--noodle-test-mode-enabled") { testMode = true; }
+  });
+
+  /* This is the cheat token only in test mode. */
+  if (testMode && req.query.token === "ThisIsTheTokenThatAlwaysWorks") {
     return true;
   }
+
   if (!req.query.id || !req.query.token) {
     res.status(400).send({ error: true, message: "Please provide an id and token" });
     return false;

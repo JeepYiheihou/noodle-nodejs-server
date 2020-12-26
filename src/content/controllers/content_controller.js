@@ -107,15 +107,14 @@ async function _update(req, res) {
 
     /* Update the fields into database. */
     const response = await Content.update(req.params.id, req.body);
-    var message;
     if (response.affectedRows == 1) {
-      message = "Content successfully updated.";
+      const message = "Content successfully updated.";
+      res.json({ error: false, message: message });
     } else if (response.affectedRows == 0) {
-      message = "Cannot find the content with given id. Maybe already deleted.";
+      _errContentNotFound(res);
     } else {
       throw response;
     }
-    res.json({ error: false, message: message });
   } catch(err) {
     console.log(err);
     _errDetectedThrownError(res);
@@ -129,15 +128,14 @@ async function _delete(req, res) {
 
     /* Delete the record from database. */
     const response = await Content.delete(req.params.id);
-    var message;
     if (response.affectedRows == 1) {
-      message = "Content successfully deleted.";
+      const message = "Content successfully deleted.";
+      res.json({ error: false, message: message });
     } else if (response.affectedRows == 0) {
-      message = "Content doesn't exist.";
+      _errContentNotFound(res);
     } else {
       throw response;
     }
-    res.json({ error: false, message: message });
   } catch(err) {
     console.log(err);
     _errDetectedThrownError(res);

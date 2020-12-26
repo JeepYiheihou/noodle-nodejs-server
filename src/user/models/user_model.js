@@ -10,7 +10,7 @@ const dbConnPool = require("../db_configs/user_sql_config");
 const redisClient = require("../db_configs/user_redis_config");
 
 /* User object definition. */
-var User = function(user) {
+const User = function(user) {
   this.id = user.id;
   this.name = user.name;
   this.password = user.password;

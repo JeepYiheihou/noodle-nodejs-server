@@ -59,7 +59,7 @@ async function _create(req, res) {
 
     /* Insert it to database. */
     const response = await User.create(newUser);
-    const message = "User successfully created!";
+    const message = "User successfully created.";
     res.json({ error: false, message: message, id: response.insertId });
   } catch (err) {
     console.log(err);
@@ -119,15 +119,14 @@ async function _update(req, res) {
 
     /* Udpate the fields into database. */
     const response = await User.update(req.params.id, req.body);
-    var message;
     if (response.affectedRows == 1) {
-      message = "User successfully updated.";
+      const message = "User successfully updated.";
+      res.json({ error: false, message: message });
     } else if (response.affectedRows == 0) {
-      message = "Cannot find the user with given id. Maybe already deleted.";
+      _errUserNotFound(res);
     } else {
       throw response;
     }
-    res.json({ error: false, message: message });
   } catch(err) {
     console.log(err);
     _errDetectedThrownError(res);
@@ -147,15 +146,14 @@ async function _delete(req, res) {
 
     /* Delete the record from database. */
     const response = await User.delete(req.params.id);
-    var message;
     if (response.affectedRows == 1) {
-      message = "User successfully deleted.";
+      const message = "User successfully deleted.";
+      res.json({ error: false, message: message });
     } else if (response.affectedRows == 0) {
-      message = "User doesn't exist.";
+      _errUserNotFound(res);
     } else {
       throw response;
     }
-    res.json({ error: false, message: message });
   } catch(err) {
     console.log(err);
     _errDetectedThrownError(res);
@@ -182,7 +180,7 @@ async function _login(req, res) {
     }
 
     /* Generate new token and SET it into redis. */
-    var newToken = tokenGenerator.generate();
+    const newToken = tokenGenerator.generate();
     await User.setToken(user.id, newToken);
     user["token"] = tokenGenerator.makeJSON(newToken);
     res.json(user);

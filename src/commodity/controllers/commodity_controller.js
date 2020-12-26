@@ -95,15 +95,14 @@ async function _udpate(req, res) {
 
     /* Update the fields into database. */
     const response = await Commodity.update(req.params.id, req.body);
-    var message;
     if (response.affectedRows == 1) {
-      message = "Commodity successfully updated.";
+      const message = "Commodity successfully updated.";
+      res.json({ error: false, message: message });
     } else if (response.affectedRows == 0) {
-      message = "Cannot find the commodity with given id. Maybe already deleted.";
+      _errCommodityNotFound(res);
     } else {
       throw response;
     }
-    res.json({ error: false, message: message });
   } catch(err) {
     console.log(err);
     _errDetectedThrownError(res);
@@ -117,15 +116,14 @@ async function _delete(req, res) {
 
     /* Delete the record from database. */
     const response = await Commodity.delete(req.params.id);
-    var message;
     if (response.affectedRows == 1) {
-      message = "Commodity successfully deleted.";
+      const message = "Commodity successfully deleted.";
+      res.json({ error: false, message: message });
     } else if (response.affectedRows == 0) {
-      message = "Commodity doesn't exist.";
+      _errCommodityNotFound(res);
     } else {
       throw response;
     }
-    res.json({ error: false, message: message });
   } catch(err) {
     console.log(err);
     _errDetectedThrownError(res);

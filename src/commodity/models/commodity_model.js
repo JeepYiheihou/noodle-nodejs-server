@@ -8,7 +8,7 @@ const COMMODITY_MYSQL_DB_CONTENT_TO_COMMODITY_MAP_TABLE_NAME =
 const connPool = require("../db_configs/commodity_sql_config");
 
 /* Commodity object definition. */
-var Commodity = function(commodity) {
+const Commodity = function(commodity) {
   this.id = commodity.id;
   this.name = commodity.name;
   this.createdTime = commodity.createdTime;

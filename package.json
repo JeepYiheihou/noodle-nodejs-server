@@ -16,7 +16,7 @@
   "devDependencies": {},
   "scripts": {
     "start": "node src/server.js",
-    "test": "mocha .test/"
+    "test": "mocha test/ --recursive --exit --noodle-test-mode-enabled"
   },
   "author": "Jiachen Bai",
   "license": "ISC"

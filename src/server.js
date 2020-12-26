@@ -46,6 +46,9 @@ app.use(THUMB_REQUEST_PREFIX, thumbRoutes);
 
 /* Start the server */
 const httpsServer = https.createServer(credentials, app);
-httpsServer.listen(SERVER_PORT, ()=>{
+httpsServer.listen(SERVER_PORT, () => {
   console.log(`Listening on port ${SERVER_PORT}`);
 });
+
+/* For testing. */
+module.exports = app;
