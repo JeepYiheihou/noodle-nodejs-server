@@ -110,6 +110,36 @@ describe("[test content part]", function() {
         });
     });
 
+    it("test failure on missing start or end params", function(done) {
+      request(app)
+        .get(`${CONTENT_REQUEST_PREFIX}/find-by-range`)
+        .query({ id: 1, token: getValidToken() })
+        .expect(400)
+        .end(function(err, res) {
+          if (err) {
+            done(err);
+          } else {
+            assert(res.body.message.includes("Invalid range. Please provide start or end params."));
+            done();
+          }
+        });
+    });
+
+    it("test failure on inverted range", function(done) {
+      request(app)
+        .get(`${CONTENT_REQUEST_PREFIX}/find-by-range`)
+        .query({ id: 1, token: getValidToken(), start: 200, end: 1 })
+        .expect(400)
+        .end(function(err, res) {
+          if (err) {
+            done(err);
+          } else {
+            assert(res.body.message.includes("Invalid range. Start cannot be larger than end."));
+            done();
+          }
+        });
+    });
+
     it("test on range that does not have content", function(done) {
       request(app)
         .get(`${CONTENT_REQUEST_PREFIX}/find-by-range`)
@@ -121,21 +151,6 @@ describe("[test content part]", function() {
           } else {
             assert.strictEqual(res.body.totalHits, 0);
             assert.strictEqual(res.body.hits.length, 0);
-            done();
-          }
-        });
-    });
-
-    it("test on inverted range", function(done) {
-      request(app)
-        .get(`${CONTENT_REQUEST_PREFIX}/find-by-range`)
-        .query({ id: 1, token: getValidToken(), start: 200, end: 1 })
-        .expect(400)
-        .end(function(err, res) {
-          if (err) {
-            done(err);
-          } else {
-            assert(res.body.message.includes("Invalid range. Start cannot be larger than end."));
             done();
           }
         });

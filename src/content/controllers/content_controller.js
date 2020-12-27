@@ -16,6 +16,10 @@ function _errFieldsRequired(res) {
   res.status(400).send({ error: true, message: "Please provide all required field." });
 }
 
+function _errInvalidRangeStartOrEndNeeded(res) {
+  res.status(400).send({ error: true, message: "Invalid range. Please provide start or end params." });
+}
+
 function _errInvalidRangeWithStartLargerThanEnd(res) {
   res.status(400).send({ error: true, message: "Invalid range. Start cannot be larger than end." });
 }
@@ -95,6 +99,15 @@ async function _findByRange(req, res) {
   try {
     /* Check token of the request. */
     if (!await checkToken(req, res)) { return; }
+
+    /* Check start and end are provided. */
+    if (!req.query.start || !req.query.end) {
+      _errInvalidRangeStartOrEndNeeded(res);
+      return;
+    }
+
+    const start = parseInt(req.query.start);
+    const end = parseInt(req.query.end);
 
     /* Check end is larger than or equal to start. */
     if (req.query.start > req.query.end) {
