@@ -110,12 +110,12 @@ async function _findByRange(req, res) {
     const end = parseInt(req.query.end);
 
     /* Check end is larger than or equal to start. */
-    if (req.query.start > req.query.end) {
+    if (start > end) {
       _errInvalidRangeWithStartLargerThanEnd(res);
       return;
     }
 
-    const contentList = await Content.findByRange(req.query.start, req.query.end);
+    const contentList = await Content.findByRange(start, end);
     res.json(_wrapContentListToJsonResponse(contentList));
   } catch(err) {
     console.log(err);
