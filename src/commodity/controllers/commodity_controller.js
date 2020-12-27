@@ -26,7 +26,7 @@ function _wrapCommodityListToJsonResponse(commodityList) {
 
 async function _create(req, res) {
   try {
-    /* Check token of the request */
+    /* Check token of the request. */
     if (!await checkToken(req, res)) { return; }
 
     if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
@@ -50,7 +50,7 @@ async function _create(req, res) {
 
 async function _findById(req, res) {
   try {
-    /* Check token of the request */
+    /* Check token of the request. */
     if (!await checkToken(req, res)) { return; }
 
     const commodityList = await Commodity.findById(req.params.id);
@@ -72,7 +72,7 @@ async function _findById(req, res) {
 
 async function _findByContentId(req, res) {
   try {
-    /* Check token of the request */
+    /* Check token of the request. */
     if (!await checkToken(req, res)) { return; }
 
     const commodityList = await Commodity.findByContentId(req.params.id);
@@ -85,7 +85,7 @@ async function _findByContentId(req, res) {
 
 async function _udpate(req, res) {
   try {
-    /* Check token of the request */
+    /* Check token of the request. */
     if (!await checkToken(req, res)) { return; }
 
     if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
@@ -111,7 +111,7 @@ async function _udpate(req, res) {
 
 async function _delete(req, res) {
   try {
-    /* Check token of the request */
+    /* Check token of the request. */
     if (!await checkToken(req, res)) { return; }
 
     /* Delete the record from database. */

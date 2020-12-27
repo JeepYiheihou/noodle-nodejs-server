@@ -8,16 +8,24 @@ const Content = require("../models/content_model");
 
 /* ======================== Private APIs ======================== */
 
-function _errDetectedThrownError(res) {
-  res.status(400).send({ error: true, message: "Error detected in content part!" });
+function _errInvalidAuthorization(res) {
+  res.status(400).send({ error: true, message: "You don't have the authorization to do this." });
 }
 
 function _errFieldsRequired(res) {
   res.status(400).send({ error: true, message: "Please provide all required field." });
 }
 
+function _errInvalidRangeWithStartLargerThanEnd(res) {
+  res.status(400).send({ error: true, message: "Invalid range. Start cannot be larger than end." });
+}
+
 function _errContentNotFound(res) {
   res.status(400).send({ error: true, message: "Content not found." });
+}
+
+function _errDetectedThrownError(res) {
+  res.status(400).send({ error: true, message: "Error detected in content part!" });
 }
 
 function _wrapContentListToJsonResponse(contentList) {
@@ -26,7 +34,7 @@ function _wrapContentListToJsonResponse(contentList) {
 
 async function _create(req, res) {
   try {
-    /* Check token of the request */
+    /* Check token of the request. */
     if (!await checkToken(req, res)) { return; }
 
     if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
@@ -36,38 +44,13 @@ async function _create(req, res) {
 
     /* Create new content. */
     const newContent = new Content(req.body);
+    newContent.creater = req.query.id;
     newContent.createdTime = datetimeGenerator.generateDateTime();
 
     /* Insert it to database. */
     const response = await Content.create(newContent);
-    const message = "Content created successfully!";
+    const message = "Content successfully created.";
     res.json({ error: false, message: message, id: response.insertId });
-  } catch(err) {
-    console.log(err);
-    _errDetectedThrownError(res);
-  }
-}
-
-async function _findAll(req, res) {
-  try {
-    /* Check token of the request */
-    if (!await checkToken(req, res)) { return; }
-
-    const contentList = await Content.findAll();
-    res.json(_wrapContentListToJsonResponse(contentList));
-  } catch(err) {
-    console.log(err);
-    _errDetectedThrownError(res);
-  }
-}
-
-async function _findByRange(req, res) {
-  try {
-    /* Check token of the request */
-    if (!await checkToken(req, res)) { return; }
-
-    const contentList = await Content.findByRange(req.query.start, req.query.end);
-    res.json(_wrapContentListToJsonResponse(contentList));
   } catch(err) {
     console.log(err);
     _errDetectedThrownError(res);
@@ -76,7 +59,7 @@ async function _findByRange(req, res) {
 
 async function _findById(req, res) {
   try {
-    /* Check token of the request */
+    /* Check token of the request. */
     if (!await checkToken(req, res)) { return; }
 
     const contentList = await Content.findById(req.params.id);
@@ -95,9 +78,41 @@ async function _findById(req, res) {
   }
 }
 
+async function _findAll(req, res) {
+  try {
+    /* Check token of the request. */
+    if (!await checkToken(req, res)) { return; }
+
+    const contentList = await Content.findAll();
+    res.json(_wrapContentListToJsonResponse(contentList));
+  } catch(err) {
+    console.log(err);
+    _errDetectedThrownError(res);
+  }
+}
+
+async function _findByRange(req, res) {
+  try {
+    /* Check token of the request. */
+    if (!await checkToken(req, res)) { return; }
+
+    /* Check end is larger than or equal to start. */
+    if (req.query.start > req.query.end) {
+      _errInvalidRangeWithStartLargerThanEnd(res);
+      return;
+    }
+
+    const contentList = await Content.findByRange(req.query.start, req.query.end);
+    res.json(_wrapContentListToJsonResponse(contentList));
+  } catch(err) {
+    console.log(err);
+    _errDetectedThrownError(res);
+  }
+}
+
 async function _update(req, res) {
   try {
-    /* Check token of the request */
+    /* Check token of the request. */
     if (!await checkToken(req, res)) { return; }
 
     if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
@@ -123,8 +138,23 @@ async function _update(req, res) {
 
 async function _delete(req, res) {
   try {
-    /* Check token of the request */
+    /* Check token of the request. */
     if (!await checkToken(req, res)) { return; }
+
+    /* First, check if the content was created by the requester. */
+    const contentList = await Content.findById(req.params.id);
+    if (contentList.length == 1) {
+      const content = contentList[0];
+      if (content.creater != req.query.id) {
+        _errInvalidAuthorization(res);
+        return;
+      }
+    } else if (contentList.length == 0) {
+      _errContentNotFound(res);
+      return;
+    } else {
+      throw response;
+    }
 
     /* Delete the record from database. */
     const response = await Content.delete(req.params.id);
@@ -150,6 +180,12 @@ exports.create = function(req, res) {
   _create(req, res);
 };
 
+/* Define findById API behavior.
+ * Token is required. */
+exports.findById = function(req, res) {
+  _findById(req, res);
+};
+
 /* Define findAll API behavior.
  * Token is required. */
 exports.findAll = function(req, res) {
@@ -160,12 +196,6 @@ exports.findAll = function(req, res) {
  * Token is required. */
 exports.findByRange = function(req, res) {
   _findByRange(req, res);
-};
-
-/* Define findById API behavior.
- * Token is required. */
-exports.findById = function(req, res) {
-  _findById(req, res);
 };
 
 /* Define update API behavior.

@@ -69,7 +69,7 @@ async function _create(req, res) {
 
 async function _findAll(req, res) {
   try {
-    /* Check token of the request */
+    /* Check token of the request. */
     if (!await checkToken(req, res)) { return; }
 
     const userList = await User.findAll();
@@ -82,7 +82,7 @@ async function _findAll(req, res) {
 
 async function _findById(req, res) {
   try {
-    /* Check token of the request */
+    /* Check token of the request. */
     if (!await checkToken(req, res)) { return; }
 
     const userList = await User.findById(req.params.id);
@@ -109,7 +109,7 @@ async function _update(req, res) {
   }
 
   try {
-    /* Check token of the request */
+    /* Check token of the request. */
     if (!await checkToken(req, res)) { return; }
 
     if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
@@ -141,7 +141,7 @@ async function _delete(req, res) {
   }
 
   try {
-    /* Check token of the request */
+    /* Check token of the request. */
     if (!await checkToken(req, res)) { return; }
 
     /* Delete the record from database. */
