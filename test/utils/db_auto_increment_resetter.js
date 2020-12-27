@@ -22,6 +22,7 @@ exports.resetUserDbAutoIncrement = async function() {
 exports.resetContentDbAutoIncrement = async function() {
   try {
     const query = `ALTER TABLE ${CONTENT_MYSQL_DB_TABLE_NAME} AUTO_INCREMENT=5500`;
+    await contentConnPoolPromise.query(query);
   } catch(err) {
     throw err;
   }
