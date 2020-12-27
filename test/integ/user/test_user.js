@@ -57,13 +57,13 @@ describe("[test user part]", function() {
           if(err) {
             done(err)
           } else {
-            assert(res.body.message.includes("Please provide an id and token"));
+            assert(res.body.message.includes("Please provide an id and token."));
             done();
           }
         });
     });
 
-    it("test find failed on non-existing user", function(done) {
+    it("test findById failure on non-existing user", function(done) {
       request(app)
         .get(`${USER_REQUEST_PREFIX}/id/10`)
         .query({ id: 1, token: getValidToken() })
@@ -78,7 +78,7 @@ describe("[test user part]", function() {
         });
     });
 
-    it("test find user by id successfully", function(done) {
+    it("test findById successfully", function(done) {
       request(app)
         .get(`${USER_REQUEST_PREFIX}/id/1`)
         .query({ id: 1, token: getValidToken() })
@@ -105,7 +105,7 @@ describe("[test user part]", function() {
           if (err) {
             done(err);
           } else {
-            assert(res.body.message.includes("Please provide an id and token"));
+            assert(res.body.message.includes("Please provide an id and token."));
             done();
           }
         });
@@ -121,8 +121,8 @@ describe("[test user part]", function() {
             done(err);
           } else {
             assert(res.body.totalHits > 1);
-            assert(res.body.hits.length > 1);
-            assert(res.body.hits[0].name = "admin");
+            assert.strictEqual(res.body.hits.length, res.body.totalHits);
+            assert.strictEqual(res.body.hits[0].name, "admin");
             done();
           }
         });
@@ -140,7 +140,7 @@ describe("[test user part]", function() {
           if(err) {
             done(err)
           } else {
-            assert(res.body.message.includes("Please provide an id and token"));
+            assert(res.body.message.includes("Please provide an id and token."));
             done();
           }
         });
@@ -238,7 +238,7 @@ describe("[test user part]", function() {
           if (err) {
             done(err);
           } else {
-            assert(res.body.message.includes("Please provide an id and token"));
+            assert(res.body.message.includes("Please provide an id and token."));
             done();
           }
         });

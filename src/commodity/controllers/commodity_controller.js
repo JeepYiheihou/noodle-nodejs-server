@@ -40,7 +40,7 @@ async function _create(req, res) {
 
     /* Insert it to database. */
     const response = await Commodity.create(newCommodity);
-    const message = "Commodity created successfully!";
+    const message = "Commodity successfully created.";
     res.json({ error: false, message: message, id: response.insertId });
   } catch(err) {
     console.log(err);
@@ -83,7 +83,7 @@ async function _findByContentId(req, res) {
   }
 }
 
-async function _udpate(req, res) {
+async function _update(req, res) {
   try {
     /* Check token of the request. */
     if (!await checkToken(req, res)) { return; }

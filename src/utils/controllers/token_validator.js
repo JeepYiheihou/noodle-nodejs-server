@@ -15,7 +15,7 @@ exports.checkToken = async function(req, res) {
   }
 
   if (!req.query.id || !req.query.token) {
-    res.status(400).send({ error: true, message: "Please provide an id and token" });
+    res.status(400).send({ error: true, message: "Please provide an id and token." });
     return false;
   }
 
